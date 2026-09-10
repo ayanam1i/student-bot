@@ -515,20 +515,23 @@ async def text_handler(message: Message):
     )
     await message.answer(ans, reply_markup=main_kb(), parse_mode="Markdown")
 
+from aiohttp import web
+
+
 async def handle_ping(request):
-  return aiohttp.web.Response(text="Bot is running 24/7!")
+  return web.Response(text="Bot is running 24/7!")
 
 
 async def main():
-  # Запуск микро-сервера для Render, чтобы статус стал зелёным Live
-  app_web = aiohttp.web.Application()
+  # Открываем веб-порт для Render
+  app_web = web.Application()
   app_web.router.add_get("/", handle_ping)
-  runner = aiohttp.web.AppRunner(app_web)
+  runner = web.AppRunner(app_web)
   await runner.setup()
   port = int(os.environ.get("PORT", 8080))
-  site = aiohttp.web.TCPSite(runner, "0.0.0.0", port)
+  site = web.TCPSite(runner, "0.0.0.0", port)
   await site.start()
-  print(f"Веб-порт {port} успешно открыт для Render!")
+  print(f"Web port {port} successfully opened for Render!")
 
   print("Бот успешно запущен и готов к работе 24/7...")
   await dp.start_polling(bot)
